@@ -49,7 +49,7 @@ const brandSchema = mongoose.Schema(
     timestamps: true,
   }
 );
-
-const Brand = mongoose.model("Brand", brandSchema);
+var collectionName = "brands";
+const Brand = mongoose.model("Brand", brandSchema, collectionName);
 
 module.exports = Brand;
