@@ -60,6 +60,7 @@ exports.getStoreById = async (req, res, next) => {
     });
   }
 };
+
 exports.updateStoreById = async (req, res, next) => {
   try {
     const { id } = req.params;
