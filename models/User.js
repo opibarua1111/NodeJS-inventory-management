@@ -1,6 +1,7 @@
 const { mongoose } = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
 
 //schema design
 const userSchema = mongoose.Schema(
@@ -10,7 +11,7 @@ const userSchema = mongoose.Schema(
       lowercase: true,
       validate: [validator.isEmail, "Please provide a valid email"],
       trim: true,
-      uniquue: true,
+      unique: true,
       required: [true, "Email address is required"],
     },
     password: {
@@ -67,13 +68,15 @@ const userSchema = mongoose.Schema(
     shippingAddress: String,
     status: {
       type: String,
-      default: "active",
+      default: "inactive",
       enum: ["active", "inactive", "blocked"],
     },
     imageURL: {
       type: String,
       validate: [validator.isURL, "Please provide a valid URL"],
     },
+    confirmationToken: String,
+    confirmationTokenExpires: Date,
     passwordChangedAt: Date,
     passwordResetToken: String,
     passwordResetExpires: Date,
@@ -94,6 +97,17 @@ userSchema.pre("save", function (next) {
 userSchema.methods.comparePassword = function (password, hash) {
   const isPasswordValid = bcrypt.compareSync(password, hash);
   return isPasswordValid;
+};
+
+userSchema.methods.generateConfirmationToken = function () {
+  const token = crypto.randomBytes(32).toString("hex");
+
+  this.confirmationToken = token;
+  const date = new Date();
+
+  date.setDate(date.getDate() + 1);
+  this.confirmationTokenExpires = date;
+  return token;
 };
 
 const User = mongoose.model("User", userSchema);

@@ -29,8 +29,6 @@ module.exports.sendMailWithGmail = async (data) => {
     subject: data.subject,
     text: data.text,
   };
-
-  console.log(mailData);
   let info = await transporter.sendMail(mailData);
 
   console.log("Message sent: %s", info.messageId);
